@@ -58,11 +58,11 @@ void game::action(WINDOW *window, std::list<mine>& mines, int c){
             wprintw(window, ".");
             if(countFlags(window) == NUM_BOMBS && areAllMinesFlagged(window, mines))
         case ' ':
-            if(winch(window) == '.' && !isOnBomb(mines, y, x)){
+            if(winch(window) == '.' && !isOnMine(mines, y, x)){
                 defuse(window, mines, y, x);
                 firstTry = false;
             }
-            else if(isOnBomb(mines, y, x) && firstTry){
+            else if(isOnMine(mines, y, x) && firstTry){
                 firstTry = false;
                 std::list<mine>::const_iterator it;
                 // same procedure at remove random mine
@@ -71,7 +71,7 @@ void game::action(WINDOW *window, std::list<mine>& mines, int c){
                 defuse(window, mines, y, x);
 
             }
-            else if(isOnBomb(mines, y, x)) {
+            else if(isOnMine(mines, y, x)) {
                 running = false;
                 reveal(window, mines, "X");
                 mvprintw(HEIGHT+3, 0, "GAME OVER!");
@@ -124,7 +124,7 @@ std::list<mine> game::createMines(std::list<mine> &mines) {
     return mines;
 }
 
-int game::isOnBomb(std::list<mine>& mines, int y, int x) {
+int game::isOnMine(std::list<mine> &mines, int y, int x) {
     std::list<mine>::const_iterator it;
     for(it = mines.begin(); it != mines.end(); it++){
         if(it->x == x && it->y == y) return 1;
@@ -134,36 +134,36 @@ int game::isOnBomb(std::list<mine>& mines, int y, int x) {
 bool game::isWithinBoundary(int y, int x){
     return (y>=0 && y<HEIGHT) && (x>=0 && x < WIDTH);
 }
-void game::getBombsCount(WINDOW* window, std::list<mine>& mines, int y, int x) {
+void game::getMinesCount(WINDOW *window, std::list<mine> &mines, int y, int x) {
 
     if(isWithinBoundary(y, x) && mvwinch(window, y, x) == '.'){
-        int count = isOnBomb(mines, y-1, x) + isOnBomb(mines, y, x-1) +
-                    isOnBomb(mines, y+1, x) + isOnBomb(mines, y, x+1) +
-                    isOnBomb(mines, y-1, x-1) + isOnBomb(mines, y+1, x+1) +
-                    isOnBomb(mines, y-1, x+1) + isOnBomb(mines, y+1, x-1);
+        int count = isOnMine(mines, y - 1, x) + isOnMine(mines, y, x - 1) +
+                isOnMine(mines, y + 1, x) + isOnMine(mines, y, x + 1) +
+                isOnMine(mines, y - 1, x - 1) + isOnMine(mines, y + 1, x + 1) +
+                isOnMine(mines, y - 1, x + 1) + isOnMine(mines, y + 1, x - 1);
 
         mvwprintw(window, y, x, "%d", count);
         //recursive loop will stop if encounter a position's char that is not '.'
         if(count == 0){
             //matches by pair
-            getBombsCount(window, mines, y-1, x);
-            getBombsCount(window, mines, y, x-1);
+            getMinesCount(window, mines, y - 1, x);
+            getMinesCount(window, mines, y, x - 1);
 
-            getBombsCount(window, mines, y+1, x);
-            getBombsCount(window, mines, y, x+1);
+            getMinesCount(window, mines, y + 1, x);
+            getMinesCount(window, mines, y, x + 1);
 
-            getBombsCount(window, mines, y-1, x-1);
-            getBombsCount(window, mines, y+1, x+1);
+            getMinesCount(window, mines, y - 1, x - 1);
+            getMinesCount(window, mines, y + 1, x + 1);
 
-            getBombsCount(window, mines, y-1, x+1);
-            getBombsCount(window, mines, y+1, x-1);
+            getMinesCount(window, mines, y - 1, x + 1);
+            getMinesCount(window, mines, y + 1, x - 1);
         }
 
     }
 }
 
 void game::defuse(WINDOW* window, std::list<mine>& mines, int y, int x) {
-    getBombsCount(window, mines, y, x);
+    getMinesCount(window, mines, y, x);
 }
 
 void game::reveal(WINDOW* window, std::list<mine> &mines, const char* c) {

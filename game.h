@@ -31,9 +31,9 @@ public:
     static std::list<mine> createMines(std::list<mine> &mines);
 private:
     static bool isWithinBoundary(int y, int x);
-    static  int isOnBomb(std::list<mine> &mines, int y, int x);
+    static  int isOnMine(std::list<mine> &mines, int y, int x);
     static void defuse(WINDOW* window, std::list<mine>& mines, int y, int x);
-    static void getBombsCount(WINDOW* window, std::list<mine>& mines, int y, int x);
+    static void getMinesCount(WINDOW *window, std::list<mine> &mines, int y, int x);
     static void automaticWin(WINDOW* window, std::list<mine>& mines);
     static bool areAllMinesFlagged(WINDOW *window, std::list<mine> &mines);
     static void reveal(WINDOW* window, std::list<mine>& mines, const char*);
