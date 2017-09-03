@@ -57,6 +57,7 @@ void game::action(WINDOW *window, std::list<mine>& mines, int c){
         case '.':
             wprintw(window, ".");
             if(countFlags(window) == NUM_BOMBS && areAllMinesFlagged(window, mines))
+                mvprintw(HEIGHT+3, 0, "YOU WIN!");
         case ' ':
             if(winch(window) == '.' && !isOnMine(mines, y, x)){
                 defuse(window, mines, y, x);
